@@ -1,3 +1,4 @@
+import os
 import random
 import time
 import webbrowser
@@ -94,7 +95,7 @@ class AWSSpotInstance():
 
     def open_ssh_term(self):
         """Opens your default terminal and starts SSH session to the instance"""
-        ## TODO. This wont work on non osx machines.
+        # TODO. This wont work on non osx machines.
         appscript.app('Terminal').do_script('ssh ' + uconf.SSH_USER_NAME + '@' + self.get_ip())
 
     def open_in_browser(self, port='80'):
@@ -103,6 +104,10 @@ class AWSSpotInstance():
         """
         webbrowser.open_new_tab('http://' + self.ip + ':' + port)
 
+    def add_to_ansible_hosts(self):
+        path = os.path.dirname(os.path.dirname(__file__))
+        with open(path + '/ansible/hosts', 'a') as file:
+            file.write(str(self.ip) + '\n')
 
 if __name__ == '__main__':
     import pricing_util
