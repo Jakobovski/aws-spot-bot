@@ -1,3 +1,4 @@
 *.pickle
 *.pyc
 venv
+play.retry

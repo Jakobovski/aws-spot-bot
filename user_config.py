@@ -9,11 +9,19 @@ SPOT_PRICING_PICKLE_EXPIRE_SEC = 30 * 60
 # =============== Personal config ==================
 AWS_ACCESS_KEY_ID = ''
 AWS_SECRET_ACCESS_KEY = ''
-KEY_NAME = 'main_key'
+KEY_NAME = ''  #
 SECURITY_GROUP_ID = ''
-SECURITY_GROUP = 'gpu-security-group'
-AMI_ID = 'ami-622eda0f'
+SECURITY_GROUP = ''
+AMI_ID = ''
 INSTANCE_TYPES = ['g2.2xlarge']
-BID = 0.25
+BID = 0.20
 SSH_USER_NAME = 'ubuntu'
 QTY_INSTANCES = 1
+SERVER_TIMEOUT = 60 * 5
+
+WAIT_FOR_HTTP = True
+WAIT_FOR_SSH = True
+OPEN_IN_BROWSER = True
+OPEN_SSH = True
+ADD_TO_ANSIBLE_HOSTS = True
+RUN_ANSIBLE = True

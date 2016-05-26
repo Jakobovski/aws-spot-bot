@@ -2,6 +2,8 @@ import os
 import random
 import time
 import webbrowser
+import socket
+import datetime
 
 import appscript
 import boto3
@@ -77,7 +79,7 @@ class AWSSpotInstance():
 
         for idx in range(100):
             if not self.instance_id and 'pending' in self.status_code:
-                time.sleep(2)
+                time.sleep(3)
                 self.get_spot_request_status()
             else:
                 self.ip = self.ec2_instance.Instance(self.instance_id).public_ip_address
@@ -109,6 +111,50 @@ class AWSSpotInstance():
         with open(path + '/ansible/hosts', 'a') as file:
             file.write(str(self.ip) + '\n')
 
+    def wait_for_http(self, port=80, timeout=uconf.SERVER_TIMEOUT):
+        """Waits until port 80 is open on this instance.
+        This is a useful way to check if the system has booted.
+        """
+        self.wait_for_port(port, timeout)
+
+    def wait_for_ssh(self, port=22, timeout=uconf.SERVER_TIMEOUT):
+        """Waits until port 22 is open on this instance.
+        This is a useful way to check if the system has booted.
+        """
+        self.wait_for_port(port, timeout)
+
+    def wait_for_port(self, port, timeout=uconf.SERVER_TIMEOUT):
+        """Waits until port is open on this instance.
+        This is a useful way to check if the system has booted and the HTTP server is running.
+        """
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(timeout)
+        start = datetime.datetime.now()
+        print ">> waiting for port", port
+
+        if not self.get_ip():
+            raise Exception("Error getting IP for this instance. Instance must have an IP before calling this method.")
+
+        while True:
+            # We need this try block because depending on the parameters the system will cause the connection
+            # to timeout early.
+            try:
+                if sock.connect_ex((self.get_ip(), port)):
+                    # we got a connection, lets return
+                    return
+                else:
+                    time.sleep(3)
+            except:
+                # TODO: catch the timeout exception and ignore that, but every other exception should be raised
+                # The system timeout, no problem
+                pass
+
+            if (datetime.datetime.now() - start).seconds > timeout:
+                print (datetime.datetime.now() - start).seconds
+                raise Exception("Connection timed out. Try increasing the timeout amount, or fix your server.")
+
+        print ">> port %s is live" % (port)
+
 if __name__ == '__main__':
     import pricing_util
     # best_az = pricing_util.get_best_az()
@@ -120,5 +166,8 @@ if __name__ == '__main__':
     si = AWSSpotInstance(region, az_zone, instance_type, uconf.AMI_ID, uconf.BID)
     response = si.request_instance()
     print si.get_ip()
+    si.wait_for_ssh()
+    si.wait_for_http()
+
     si.open_in_browser()
     si.open_ssh_term()
