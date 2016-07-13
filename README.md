@@ -1,34 +1,24 @@
 ## AWS-SPOT-BOT
-A tool for automating the finding and launching of the cheapest and most reliable AWS spot instances. It is primarily intended for machine learning researchers to be able to spawn multiple GPU instances without incurring large costs.
+A tool for finding and launching the cheapest and most reliable AWS spot instances. Using an unsophisticated algorithm it launches instances in regions that have have a low price and a low price variance so that your instance is less likely to get shut down by changes in demand. It is primarily intended for machine learning researchers to be able to spawn GPU instances without incurring large costs.
 
+### Usage
+Edit `user_config.py` to your specifications then run `main.py`.   
 
-#### Configuration Options
-- Acceptable Regions
-- Max Bid price
-- Minimum time requirements
-- Acceptable Instance Types
-- AMI
-- Use elastic IPs
-
-
-#### Ansible
+### Ansible
 For convenience Ansible is integrated into this tool. This allows one to automatically run tasks on the servers after they are launched.
-This saves one from needing to rebuild AMIs every time a change is required. See `userconfig.py` and `main.py` for more details. Be warned that 
+This saves one from needing to rebuild AMIs every time a change is required. See `user_config.py` and `main.py` for more details. Be warned that 
 hosts are not automatically removed from the Ansible `hosts` file. 
 
 
-#### DISCLAIMER
+### DISCLAIMER!!
 This library is something I threw together for my personal use. The code is not well tested and is in no way production worthy. Feel free to contribute.
 
 
 ### Requested contributions
 - add a check to report how many instances you currently have running
 - add to pypy
-- search the project for "todo" and improve those items 
+- search the project for "todo" and improve those items
 
-
-#### Usage
-Edit `user_config.py` to your specifications then run `main.py`.   
 
 ### License
 MIT
