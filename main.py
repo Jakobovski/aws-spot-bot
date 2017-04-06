@@ -2,6 +2,7 @@ import os
 
 from utils import pricing_util
 from utils.aws_spot_instance import AWSSpotInstance
+from utils.aws_spot_exception import SpotConstraintException
 import aws_spot_bot.user_config as uconf
 
 
@@ -15,7 +16,12 @@ def launch_instances(qty):
         print '>> Launching instance #%s' % idx
         si = AWSSpotInstance(best_az.region, best_az.name, uconf.INSTANCE_TYPES[0], uconf.AMI_ID, uconf.BID)
         si.request_instance()
-        si.get_ip()
+        try:
+            si.get_ip()
+        except SpotConstraintException, e:
+            print(">> ", e.message)
+            si.cancel_spot_request()
+            continue
         launched_instances.append(si)
 
     return launched_instances

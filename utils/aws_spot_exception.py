@@ -1,0 +1,3 @@
+
+class SpotConstraintException(Exception):
+    pass

@@ -9,7 +9,7 @@ import appscript
 import boto3
 
 import aws_spot_bot.user_config as uconf
-
+from aws_spot_exception import SpotConstraintException
 
 class AWSSpotInstance():
 
@@ -70,6 +70,13 @@ class AWSSpotInstance():
         self.instance_id = response.get('SpotInstanceRequests')[0].get('InstanceId')
         return {'status_code': self.status_code, 'instance_id': self.instance_id}
 
+    def cancel_spot_request(self):
+        print ">> Cancelling spot request"
+        response = self.client.cancel_spot_instance_requests(
+            SpotInstanceRequestIds=[self.spot_instance_request_id],
+        )
+        return response
+
     def get_ip(self):
         if self.ip:
             return self.ip
@@ -78,9 +85,12 @@ class AWSSpotInstance():
             self.get_spot_request_status()
 
         for idx in range(100):
-            if not self.instance_id and 'pending' in self.status_code:
-                time.sleep(3)
-                self.get_spot_request_status()
+            if not self.instance_id:
+                if 'pending' in self.status_code:
+                    time.sleep(3)
+                    self.get_spot_request_status()
+                else:
+                    raise SpotConstraintException("Spot constraints can't be met: " + self.status_code)
             else:
                 self.ip = self.ec2_instance.Instance(self.instance_id).public_ip_address
                 break
