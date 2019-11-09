@@ -21,7 +21,7 @@ pyasn1==0.1.9
 pycparser==2.14
 pycrypto==2.6.1
 python-dateutil==2.5.3
-PyYAML==3.11
+PyYAML==5.1
 rsa==3.3
 s3transfer==0.0.1
 six==1.10.0
