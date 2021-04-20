@@ -1,4 +1,4 @@
-ansible==2.6.18
+ansible==2.9.20
 appscript==1.0.1
 awscli==1.10.32
 boto3==1.3.1
