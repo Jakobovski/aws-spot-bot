@@ -25,4 +25,4 @@ PyYAML==5.1
 rsa==3.3
 s3transfer==0.0.1
 six==1.10.0
-wheel==0.24.0
+wheel==0.38.1
